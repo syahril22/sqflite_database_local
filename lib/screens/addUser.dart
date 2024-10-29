@@ -1,4 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:sqflite_crud/models/student_model.dart';
+import 'package:sqflite_crud/services/student_database.dart';
 
 class AddUser extends StatefulWidget {
   const AddUser({super.key});
@@ -8,8 +14,104 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUserState extends State<AddUser> {
+  final _nameController = TextEditingController();
+  final _nisnController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _studentDb = StudentDatabase.instance;
+  File? _imageFile;
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Add New User',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.purple,
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Fungsi untuk memilih tanggal
+  Future<void> _selectDate() async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _birthDateController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
+  // Fungsi untuk memilih gambar
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Fungsi untuk menyimpan data siswa
+  Future<void> _saveStudent() async {
+    final student = Student(
+      name: _nameController.text,
+      nisn: _nisnController.text,
+      birthDate: _birthDateController.text,
+      photoPath: _imageFile?.path,
+    );
+
+    await _studentDb.insertStudent(student);
+    _clearFields();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Siswa Ditambahkan!')),
+    );
+  }
+
+  // Fungsi untuk mengosongkan field setelah simpan
+  void _clearFields() {
+    _nameController.clear();
+    _nisnController.clear();
+    _birthDateController.clear();
+    setState(() {
+      _imageFile = null;
+    });
+  }
+
+  // Fungsi untuk membangun label
+  Widget _buildLabel(String text) {
+    return Text(text, style: TextStyle(fontSize: 18));
+  }
+
+  // Fungsi untuk membangun TextField
+  Widget _buildTextField(TextEditingController controller, String hintText,
+      {IconData? suffixIcon}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+    );
   }
 }
