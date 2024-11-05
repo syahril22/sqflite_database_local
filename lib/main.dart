@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_crud/screens/addUser.dart';
+import 'package:sqflite_crud/screens/view_user.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,7 +11,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: AddUser(),
+      home: ViewUserPage(),
     );
   }
 }

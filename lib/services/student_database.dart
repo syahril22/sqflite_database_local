@@ -58,4 +58,25 @@ class StudentDatabase {
       );
     });
   }
+
+  // Delete Data Student :
+  Future<void> deleteStudent(int id) async {
+    final db = await getDatabase();
+    await db.delete(
+      'students',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Update Data Student
+  Future<void> updateStudent(Student student) async {
+    final db = await getDatabase();
+    await db.update(
+      'students',
+      student.toMap(),
+      where: 'id = ?',
+      whereArgs: [student.id],
+    );
+  }
 }

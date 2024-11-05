@@ -36,7 +36,45 @@ class _AddUserState extends State<AddUser> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [],
+            children: [
+              _buildLabel('Nama Siswa'),
+              _buildTextField(_nameController, 'Masukkan Nama'),
+              SizedBox(height: 20),
+              _buildLabel('NISN Siswa'),
+              _buildTextField(_nisnController, 'Masukan NSIN'),
+              SizedBox(height: 20),
+              _buildLabel('Tanggal Lahir'),
+              GestureDetector(
+                onTap: _selectDate,
+                child: AbsorbPointer(
+                  child: _buildTextField(
+                    _birthDateController,
+                    'Pilih Tanggal Lahir',
+                    suffixIcon: Icons.calendar_today,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildPhotoUploader(),
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _saveStudent,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    backgroundColor: Colors.purple,
+                  ),
+                  child: const Text(
+                    'Tambah',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -111,6 +149,30 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
         filled: true,
         fillColor: Colors.grey[200],
+      ),
+    );
+  }
+
+  // Fungsi untuk upload foto
+  Widget _buildPhotoUploader() {
+    return Center(
+      child: Column(
+        children: [
+          const Text('Unggah Foto Profil', style: TextStyle(fontSize: 18)),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: _pickImage,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundImage: _imageFile != null
+                  ? FileImage(_imageFile!)
+                  : const AssetImage('assets/placeholder.png') as ImageProvider,
+              child: _imageFile == null
+                  ? const Icon(Icons.camera_alt, size: 50, color: Colors.grey)
+                  : null,
+            ),
+          ),
+        ],
       ),
     );
   }
